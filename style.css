@@ -1,0 +1,10 @@
+.container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+}
+
+.ui-autocomplete {
+    z-index: 9999 !important;
+}
