@@ -1,0 +1,102 @@
+.container {
+    margin: 0 auto;
+    max-width: 960px;
+}
+
+.text-center {
+    text-align: center;
+}
+
+.search-container {
+    margin-top: 20px;
+}
+
+#searchInput {
+    width: 100%;
+    padding: 10px;
+    font-size: 16px;
+}
+
+.results-container {
+    text-align: center;
+    margin-top: 20px;
+}
+
+.results-container h1 {
+    font-size: 24px;
+    margin-bottom: 10px;
+}
+
+.results-container ul {
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
+}
+
+.results-container li {
+    margin-bottom: 10px;
+}
+
+.results-container h3 {
+    font-size: 16px;
+    margin-bottom: 5px;
+}
+
+.results-container p {
+    font-size: 14px;
+    margin: 0;
+}
+
+.result-item {
+    text-align: left;
+    margin-bottom: 20px;
+}
+
+.pagination {
+    display: flex;
+    justify-content: center;
+    padding: 1em 0;
+    font-size: 1.2em;
+    margin-top: 30px;
+}
+
+.pagination a {
+    color: #1a0dab;
+    text-decoration: none;
+    margin: 0 10px;
+}
+
+.pagination a:hover {
+    text-decoration: underline;
+}
+
+.ui-autocomplete {
+    max-height: 200px;
+    overflow-y: auto;
+    overflow-x: hidden;
+    padding-right: 20px; /* for the scrollbar */
+    border: 1px solid #c5c5c5;
+    background: #fff;
+    box-shadow: 1px 1px 10px rgba(0, 0, 0, 0.1);
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
+}
+
+.ui-menu-item {
+    padding: 5px 10px;
+    cursor: pointer;
+}
+
+.ui-menu-item:hover {
+    background: #f5f5f5;
+}
+
+.result-category {
+    display: block; /* Each category on a new line */
+    padding: 5px; /* Some padding for better visual spacing */
+    color: #000000; /* Change to the color you want for the text */
+    background-color: #F0F0F0; /* Change to the color you want for the background */
+    margin: 5px 0; /* Some margin for better visual spacing */
+}
+

@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Results</title>
+    <!-- Include the Bootstrap and jQuery UI CSS here -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://code.jquery.com/ui/1.13.0/themes/smoothness/jquery-ui.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+
+    <!-- Include your custom CSS -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    
+</head>
+<body>
+
+    <nav class="navbar navbar-light bg-light">
+        <div class="container">
+            <a class="navbar-brand" href="/">SciFinder</a>
+            
+            <!-- Basket Icon -->
+            <div id="basket-icon">
+                <i class="fa fa-shopping-basket"></i> 
+                <span id="basket-count">0</span>
+            </div>
+        </div>
+    </nav>
+    <div class="container">
+        <!-- Search Bar -->
+        <div class="text-center">
+            <h1>SciFinder</h1>
+            <form action="{{ url_for('results') }}" method="get" class="form-inline mt-4">
+                <input id="searchInput1" type="text" class="form-control searchInput" value="{{ ent_id }}" name="ent_id" placeholder="Search">
+                <button class="btn btn-primary" type="submit">Search</button>
+            </form>
+        </div>
+
+        <!-- Search Results -->
+        <h2>Search Results for: {{ ent_id }}</h2>
+        <h5>Total papers found: {{ total_results }}</h5>
+
+        <div class="results-container">
+            <ul>
+                {% for result in results %}
+                <li>
+                    <div class="result-item {{ 'in-basket' if result['ent_id'] in session['basket'] }}">
+                        <h3>{{ result['title'] }}</h3>
+                        <p class="result-info">
+                            <span class="result-category"><strong>Authors:</strong> {{ result['authors'] }}</span>
+                            <span class="result-category"><strong>Year:</strong> {{ result['year'] }}</span>
+                            <span class="result-category"><strong>Citation Count:</strong> {{ result['citation_count'] }}</span>
+                        </p>
+                        <!-- Add to Basket and Remove from Basket buttons -->
+                        <button class="addToBasket" data-ent-id="{{ result['ent_id'] }}">Add to Basket</button>
+                        <button class="removeFromBasket" data-ent-id="{{ result['ent_id'] }}">Remove from Basket</button>
+                    </div>
+                </li>
+                {% endfor %}
+            </ul>
+        </div>
+
+        <!-- Pagination -->
+        <div class="pagination">
+            {% if current_page > 1 %}
+                <a href="{{ url_for('results', ent_id=ent_id, page=current_page-1) }}">Previous</a>
+            {% endif %}
+            
+            <span>Page {{ current_page }} of {{ total_pages }}</span>
+            
+            {% if current_page < total_pages %}
+                <a href="{{ url_for('results', ent_id=ent_id, page=current_page+1) }}">Next</a>
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- Modal for basket content -->
+    <div id="basket-modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <p>Your selected articles:</p>
+            <ul id="basket-list">
+                <!-- List of selected articles will be dynamically added here -->
+            </ul>
+            <button id="analyze-button">Analyze these articles</button>
+        </div>
+    </div>
+
+    <!-- Include the jQuery and jQuery UI JS here -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+    <script src="https://code.jquery.com/ui/1.13.0/jquery-ui.min.js"></script>
+
+    <!-- Custom script -->
+    <script src="{{ url_for('static', filename='script.js') }}"></script>
+
+    <!-- Inline script for autocomplete -->
+    <script>
+       $(document).ready(function() {
+        // Select text when user clicks on the search field
+        $('.searchInput').focus(function() {
+            $(this).select();
+        });
+    });
+    </script>
+    
+</body>
+</html>

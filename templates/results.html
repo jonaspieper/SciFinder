@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Results</title>
+    <!-- Include the Bootstrap and jQuery UI CSS here -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://code.jquery.com/ui/1.13.0/themes/smoothness/jquery-ui.css">
+
+    <!-- Include your custom CSS -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <div class="container">
+        <!-- Search Bar -->
+        <div class="text-center">
+            <h1>SciFinder</h1>
+            <form action="{{ url_for('results') }}" method="get" class="form-inline mt-4">
+                <input id="searchInput1" type="text" class="form-control searchInput" value="{{ ent_id }}" name="ent_id" placeholder="Search">
+                <button class="btn btn-primary" type="submit">Search</button>
+            </form>
+        </div>
+
+        <!-- Search Results -->
+        <h2>Search Results for: {{ ent_id }}</h2>
+        <h5>Total papers found: {{ total_results }}</h5>
+
+        
+        <div class="results-container">
+            <ul>
+                {% for result in results %}
+                <li>
+                    <div class="result-item">
+                        <h3>{{ result['title'] }}</h3>
+                        <p class="result-info">
+                            <span class="result-category"><strong>Authors:</strong> {{ result['authors'] }}</span>
+                            <span class="result-category"><strong>Year:</strong> {{ result['year'] }}</span>
+                            <span class="result-category"><strong>Citation Count:</strong> {{ result['citation_count'] }}</span>
+                        </p>
+                    </div>
+                </li>
+                {% endfor %}
+            </ul>
+        </div>
+
+        <!-- Pagination -->
+        <div class="pagination">
+            {% if current_page > 1 %}
+                <a href="{{ url_for('results', ent_id=ent_id, page=current_page-1) }}">Previous</a>
+            {% endif %}
+            
+            <span>Page {{ current_page }} of {{ total_pages }}</span>
+            
+            {% if current_page < total_pages %}
+                <a href="{{ url_for('results', ent_id=ent_id, page=current_page+1) }}">Next</a>
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- Include the jQuery and jQuery UI JS here -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+    <script src="https://code.jquery.com/ui/1.13.0/jquery-ui.min.js"></script>
+
+    <!-- Custom script -->
+    <script src="{{ url_for('static', filename='script.js') }}"></script>
+
+    <!-- Inline script for autocomplete -->
+    <script>
+       $(document).ready(function() {
+        // Select text when user clicks on the search field
+        $('.searchInput').focus(function() {
+            $(this).select();
+        });
+    });
+    </script>
+    
+    <script>
+        $(document).ready(function() {
+            // Load the ent_ids JSON file
+            $.getJSON('/ent_ids.json', function(data) {
+                // Flatten the ent_ids dictionary to an array of objects
+                const entities = Object.entries(data).map(([key, values]) => ({ entity_id: key, values }));
+    
+                // Initialize the autocomplete
+                $('.searchInput').autocomplete({
+                    delay: 200,
+                    source: function(request, response) {
+                        const term = request.term.toLowerCase();
+                        if (term.length < 3) {  // minimum character limit
+                            response([]);
+                            return;
+                        }
+                        const suggestions = entities.filter(function(entity) {
+                            return entity.entity_id.toLowerCase().includes(term);
+                        });
+                        const limitedSuggestions = suggestions.slice(0, 10).map(function(entity) {
+                            return {
+                                label: entity.entity_id,
+                                value: entity.entity_id
+                            };
+                        });
+                        response(limitedSuggestions);
+                    },
+                    select: function(event, ui) {
+                        // Set the input value to the selected entity ID
+                        $(this).val(ui.item.value);
+                        // Submit the form
+                        $(this).closest('form').submit();
+                        return false; // Prevent default selection behavior
+                    }
+                });
+            });
+    
+            // Select text when user clicks on the search field
+            $('.searchInput').focus(function() {
+                $(this).select();
+            });
+        });
+    </script>
+</body>
+</html>

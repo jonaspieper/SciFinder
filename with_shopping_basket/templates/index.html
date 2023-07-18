@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>SciFinder</title>
+    <!-- Include Bootstrap CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+
+    <!-- Include jQuery -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+    <!-- Include Popper.js -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
+
+    <!-- Include Bootstrap JS -->
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+
+    <!-- Include jQuery UI CSS -->
+    <link rel="stylesheet" href="https://code.jquery.com/ui/1.13.0/themes/smoothness/jquery-ui.css">
+
+    <!-- Include jQuery UI Autocomplete -->
+    <script src="https://code.jquery.com/ui/1.13.0/jquery-ui.min.js"></script>
+
+    <!-- Include your custom CSS -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+
+    <!-- Include your custom script -->
+    <script src="../static/script.js"></script> <!-- Update the path to script.js -->
+
+    <script>
+        $(document).ready(function() {
+            // Load the ent_ids JSON file
+            $.getJSON('ent_ids.json', function(data) {
+                // Flatten the ent_ids dictionary to an array of objects
+                const entities = Object.entries(data).map(([key, values]) => ({ entity_id: key, values }));
+
+                // Initialize the autocomplete
+                $('#searchInput').autocomplete({
+                    delay: 200, // Delay in milliseconds before triggering search
+                    source: function(request, response) {
+                        const term = request.term.toLowerCase();
+                        const suggestions = entities.filter(function(entity) {
+                            return entity.entity_id.toLowerCase().includes(term);
+                        });
+
+                        // Limit the number of suggestions to 10
+                        const limitedSuggestions = suggestions.slice(0, 10).map(function(entity) {
+                            return {
+                                label: entity.entity_id,
+                                value: entity.entity_id
+                            };
+                        });
+
+                        // Provide the suggestions to the autocomplete
+                        response(limitedSuggestions);
+                    },
+                    select: function(event, ui) {
+                        // Redirect to results.html with the selected entity ID as a query parameter
+                        window.location.href = 'results?ent_id=' + encodeURIComponent(ui.item.value);
+                        return false; // Prevent default selection behavior
+                    }
+                });
+            });
+        });
+    </script>
+</head>
+<body>
+    <div class="container">
+        <div class="text-center">
+            <h1>Welcome to SciFinder!</h1>
+            <form class="form-inline mt-4">
+                <input id="searchInput" type="text" class="form-control mr-sm-2" placeholder="Search">
+                <button class="btn btn-primary" type="submit">Search</button>
+            </form>
+        </div>
+    </div>
+</body>
+</html>
